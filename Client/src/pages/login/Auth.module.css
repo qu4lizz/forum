@@ -1,0 +1,26 @@
+.wrapper {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background: rgb(52, 52, 54);
+  background: radial-gradient(
+    circle,
+    var(--mantine-color-dark-7) 0%,
+    var(--mantine-color-dark-9) 100%
+  ); */
+}
+
+.form {
+  border: rem(3px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  max-width: rem(450px);
+  @media (max-width: $mantine-breakpoint-sm) {
+    max-width: 100%;
+  }
+}
+
+.title {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  font-family: Greycliff CF, var(--mantine-font-family);
+}
