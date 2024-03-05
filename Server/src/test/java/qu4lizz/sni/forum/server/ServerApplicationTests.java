@@ -1,4 +1,4 @@
-package qu4lizz.ip.forum.server;
+package qu4lizz.sni.forum.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
