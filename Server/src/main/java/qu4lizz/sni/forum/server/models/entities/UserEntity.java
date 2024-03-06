@@ -6,6 +6,7 @@ import qu4lizz.sni.forum.server.models.enums.Role;
 import qu4lizz.sni.forum.server.models.enums.Status;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,8 +35,8 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
-    @OneToMany(mappedBy = "idUser")
-    private Collection<PermissionEntity> permissions;
+    @OneToMany(mappedBy = "idUser", fetch = FetchType.EAGER)
+    private List<PermissionEntity> permissions;
 
     @Override
     public boolean equals(Object o) {

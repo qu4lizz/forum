@@ -79,8 +79,11 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers(HttpMethod.POST, "/api/auth/**")
                     .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/users/username")
+                    .permitAll()
                     .requestMatchers("/students/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
+
             )
             .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
             .authenticationProvider(authenticationProvider())

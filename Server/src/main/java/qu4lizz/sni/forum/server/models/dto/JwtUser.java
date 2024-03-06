@@ -9,6 +9,7 @@ import qu4lizz.sni.forum.server.models.enums.Role;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 @Data
 public class JwtUser implements UserDetails {
@@ -16,7 +17,7 @@ public class JwtUser implements UserDetails {
     private String username;
     private String password;
     private Role role;
-    private Collection<PermissionEntity> permissions;
+    private List<PermissionEntity> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

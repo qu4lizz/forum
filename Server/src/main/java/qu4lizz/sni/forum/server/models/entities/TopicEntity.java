@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +22,7 @@ public class TopicEntity {
     @Column(name = "image")
     private byte[] image;
     @OneToMany(mappedBy = "idTopic")
-    private Collection<CommentEntity> commentsById;
+    private List<CommentEntity> commentsById;
 
     @Override
     public boolean equals(Object o) {
