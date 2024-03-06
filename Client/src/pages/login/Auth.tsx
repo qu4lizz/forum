@@ -8,20 +8,29 @@ import {
   Anchor,
   Divider,
   Group,
+  PinInput,
+  Center,
 } from "@mantine/core";
 import classes from "./Auth.module.css";
 import { GoogleButton } from "./GoogleButton";
 import { useToggle } from "@mantine/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import authService from "../../services/auth.service";
+import { notifications } from "@mantine/notifications";
+import { login, logout } from "../../redux/slices/userSlice";
+import { useAppDispatch } from "../../redux";
 
 interface Props {
   req: "Login" | "Register";
+  close: any;
 }
 
-export function Auth({ req }: Props) {
+export function Auth({ req, close }: Props) {
   const [type, toggle] = useToggle(["Login", "Register"]);
+  const [isStepOne, setStepOne] = useState<boolean>(true);
+  const [verificationCode, setVerificationCode] = useState<string>("");
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     toggle(req);
@@ -50,16 +59,86 @@ export function Auth({ req }: Props) {
     },
   });
 
-  const submit = () => {
-    console.log(form.values);
+  const submit = async () => {
     if (type === "Register") {
-      authService.register(form.values);
+      authService
+        .register(form.values)
+        .then(() => {
+          notifications.show({
+            title: "Successful Registration",
+            message:
+              "You have registered. You will get a email when admin approves your account.",
+          });
+          close();
+        })
+        .catch((res: any) => {
+          if (res.response.status === 400) {
+            notifications.show({
+              title: "Registration Failed",
+              message: res.response.data,
+            });
+          } else {
+            notifications.show({
+              title: "Registration Failed",
+              message: "Server Error",
+            });
+          }
+        });
     } else {
-      authService.login({
-        username: form.values.username,
-        password: form.values.password,
-      });
+      authService
+        .login({
+          username: form.values.username,
+          password: form.values.password,
+        })
+        .then((res: any) => {
+          notifications.show({
+            title: "Email Code",
+            message: "You received login code on email.",
+          });
+          setStepOne(false);
+          sessionStorage.setItem("id", res.tempId);
+        })
+        .catch((res: any) => {
+          console.log(res);
+          if (res.response.status === 400 || res.response.status == 401) {
+            notifications.show({
+              title: "Login Failed",
+              message: res.response.data,
+            });
+          } else {
+            notifications.show({
+              title: "Login Failed",
+              message: "Server Error",
+            });
+          }
+        });
     }
+  };
+
+  const submitVerification = async () => {
+    if (verificationCode.length !== 6) {
+      notifications.show({
+        title: "Error",
+        message: "Verification code needs to have 6 characters",
+      });
+      return;
+    }
+
+    await dispatch(
+      login({
+        code: verificationCode,
+        id: sessionStorage.getItem("id"),
+      })
+    )
+      .then(() => {
+        close();
+      })
+      .catch((res: any) => {
+        notifications.show({
+          title: "Login Failed",
+          message: res.response.data,
+        });
+      });
   };
 
   return (
@@ -68,70 +147,92 @@ export function Auth({ req }: Props) {
         Welcome to Forum!
       </Title>
 
-      <form onSubmit={form.onSubmit(() => submit())}>
-        {type === "Register" && (
-          <TextInput
-            withAsterisk
-            label="Email"
-            size="md"
-            value={form.values.email}
-            onChange={(event) =>
-              form.setFieldValue("email", event.currentTarget.value)
-            }
-            error={form.errors.email}
-            radius="md"
-          />
-        )}
+      {isStepOne && (
+        <>
+          <form onSubmit={form.onSubmit(() => submit())}>
+            {type === "Register" && (
+              <TextInput
+                withAsterisk
+                label="Email"
+                size="md"
+                value={form.values.email}
+                onChange={(event) =>
+                  form.setFieldValue("email", event.currentTarget.value)
+                }
+                error={form.errors.email}
+                radius="md"
+              />
+            )}
 
-        <TextInput
-          withAsterisk
-          label="Username"
-          size="md"
-          mt="md"
-          value={form.values.username}
-          onChange={(event) =>
-            form.setFieldValue("username", event.currentTarget.value)
-          }
-          error={form.errors.username}
-          radius="md"
-        />
+            <TextInput
+              withAsterisk
+              label="Username"
+              size="md"
+              mt="md"
+              value={form.values.username}
+              onChange={(event) =>
+                form.setFieldValue("username", event.currentTarget.value)
+              }
+              error={form.errors.username}
+              radius="md"
+            />
 
-        <PasswordInput
-          withAsterisk
-          label="Password"
-          mt="md"
-          size="md"
-          value={form.values.password}
-          onChange={(event) =>
-            form.setFieldValue("password", event.currentTarget.value)
-          }
-          error={form.errors.password}
-          radius="md"
-        />
+            <PasswordInput
+              withAsterisk
+              label="Password"
+              mt="md"
+              size="md"
+              value={form.values.password}
+              onChange={(event) =>
+                form.setFieldValue("password", event.currentTarget.value)
+              }
+              error={form.errors.password}
+              radius="md"
+            />
 
-        <Button fullWidth mt="xl" size="md" type="submit">
-          {type}
-        </Button>
-      </form>
+            <Button fullWidth mt="xl" size="md" type="submit">
+              {type}
+            </Button>
+          </form>
 
-      <Text ta="center" mt="md">
-        {type === "Register"
-          ? "Already have an account?"
-          : "Don't have an account?"}{" "}
-        <Anchor<"a">
-          fw={700}
-          onClick={() => {
-            toggle();
-            form.reset();
-          }}
-        >
-          {type === "Register" ? "Login" : "Register"}
-        </Anchor>
-      </Text>
-      <Divider label="OR" labelPosition="center" my="lg" />
-      <Group grow mb="md" mt="md">
-        <GoogleButton radius="xl">Google</GoogleButton>
-      </Group>
+          <Text ta="center" mt="md">
+            {type === "Register"
+              ? "Already have an account?"
+              : "Don't have an account?"}{" "}
+            <Anchor<"a">
+              fw={700}
+              onClick={() => {
+                toggle();
+                form.reset();
+              }}
+            >
+              {type === "Register" ? "Login" : "Register"}
+            </Anchor>
+          </Text>
+          <Divider label="OR" labelPosition="center" my="lg" />
+          <Group grow mb="md" mt="md">
+            <GoogleButton radius="xl">Google</GoogleButton>
+          </Group>
+        </>
+      )}
+
+      {!isStepOne && (
+        <>
+          <Text size="lg" ta="center">
+            You have received 6 character code on email, enter it
+          </Text>
+          <Center>
+            <PinInput
+              mt="lg"
+              length={6}
+              onChange={(target) => setVerificationCode(target)}
+            />
+          </Center>
+          <Button fullWidth mt="xl" size="md" onClick={submitVerification}>
+            {type}
+          </Button>
+        </>
+      )}
     </Paper>
   );
 }

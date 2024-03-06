@@ -7,7 +7,7 @@ import { Home } from "./pages/home/Home";
 function App() {
   return (
     <>
-      <Notifications position="top-right" zIndex={1000} />
+      <Notifications position="top-right" zIndex={2500} />
       <NavBar />
       <Container size="100%" h="100vh" px={0}>
         <Routes>
