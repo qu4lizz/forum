@@ -2,12 +2,12 @@ package qu4lizz.sni.forum.server.exceptions;
 
 import org.apache.coyote.BadRequestException;
 
-public class EmailAlreadyExistException extends BadRequestException {
-    public EmailAlreadyExistException() {
+public class AlreadyExistsException extends BadRequestException {
+    public AlreadyExistsException() {
         super("Email address already exists");
     }
 
-    public EmailAlreadyExistException(String message) {
+    public AlreadyExistsException(String message) {
         super(message);
     }
 }

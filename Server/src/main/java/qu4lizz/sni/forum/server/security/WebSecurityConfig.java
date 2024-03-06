@@ -65,7 +65,7 @@ public class WebSecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
         //config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("https://localhost:4200"));
+        config.setAllowedOrigins(List.of("https://localhost:5173"));
         config.addAllowedHeader("*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 
@@ -75,21 +75,17 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                //.csrf(csrf -> csrf.csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler()))
-                .authorizeHttpRequests((authorize) -> authorize
-                        //.requestMatchers("/csrf").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/**")
-                        .permitAll()
-                        .requestMatchers("/students/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        // .httpBasic(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests((authorize) -> authorize
+                    .requestMatchers(HttpMethod.POST, "/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/students/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
+            )
+            .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(
+                    jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

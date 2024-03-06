@@ -3,6 +3,7 @@ package qu4lizz.sni.forum.server.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import qu4lizz.sni.forum.server.models.enums.Role;
+import qu4lizz.sni.forum.server.models.enums.Status;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -27,12 +28,12 @@ public class UserEntity {
     @Basic
     @Column(name = "login_code")
     private String loginCode;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
-    @Basic
-    @Column(name = "approved")
-    private boolean approved;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
     @OneToMany(mappedBy = "idUser")
     private Collection<PermissionEntity> permissions;
 

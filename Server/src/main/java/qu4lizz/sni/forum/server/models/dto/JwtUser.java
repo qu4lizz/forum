@@ -1,12 +1,11 @@
 package qu4lizz.sni.forum.server.models.dto;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import qu4lizz.sni.forum.server.models.entities.PermissionEntity;
+import qu4lizz.sni.forum.server.models.enums.Role;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,11 +13,9 @@ import java.util.HashSet;
 @Data
 public class JwtUser implements UserDetails {
     private Integer id;
-    private String email;
     private String username;
     private String password;
-    private String loginCode;
-    private Object role;
+    private Role role;
     private Collection<PermissionEntity> permissions;
 
     @Override

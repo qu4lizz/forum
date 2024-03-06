@@ -2,11 +2,13 @@ package qu4lizz.sni.forum.server.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "permission", schema = "public", catalog = "forum")
 public class PermissionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,14 @@ public class PermissionEntity {
     @Basic
     @Column(name = "id_topic")
     private Integer idTopic;
+
+    public PermissionEntity(int idU, int idT) {
+        idTopic = idT;
+        idUser = idU;
+        write = true;
+        delete = false;
+        update = false;
+    }
 
     @Override
     public boolean equals(Object o) {

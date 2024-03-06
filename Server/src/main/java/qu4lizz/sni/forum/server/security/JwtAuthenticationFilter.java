@@ -21,11 +21,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final JwtUserDetailsService userService;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, JwtUserDetailsService userService) {
+    public JwtAuthenticationFilter(JwtService jwtService, JwtUserDetailsService jwtUserDetailsService) {
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.jwtUserDetailsService = jwtUserDetailsService;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String username;
 
-        if (StringUtils.isEmpty(authHeader) || authHeader.startsWith("Bearer ")) {
+        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         username = jwtService.extractUsername(jwt);
 
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
+            UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
