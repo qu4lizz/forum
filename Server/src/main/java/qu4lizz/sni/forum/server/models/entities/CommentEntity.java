@@ -23,6 +23,9 @@ public class CommentEntity {
     @Basic
     @Column(name = "id_topic")
     private Integer idTopic;
+    @Basic
+    @Column(name = "approved")
+    private Boolean approved;
     @ManyToOne
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     private UserEntity user;

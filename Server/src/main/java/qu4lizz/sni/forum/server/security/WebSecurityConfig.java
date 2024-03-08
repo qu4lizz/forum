@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import qu4lizz.sni.forum.server.services.JwtUserDetailsService;
-import qu4lizz.sni.forum.server.services.UserService;
 
 import java.util.List;
 
@@ -82,6 +81,9 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/users/username").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/topics/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/topics/comments").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/api/topics/comments").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/api/topics/comments").authenticated()
                     .requestMatchers("/students/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
 

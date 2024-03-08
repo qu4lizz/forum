@@ -99,7 +99,7 @@ public class AuthService {
         if (userEntity.getLoginCode().equals(request.getCode())) {
             JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(userEntity.getUsername());
 
-            return new JwtAuthResponse(jwtService.generateToken(jwtUser));
+            return new JwtAuthResponse(jwtService.generateToken(jwtUser), jwtUser.getUsername());
         }
         else throw new InvalidCredentialsException("Incorrect login code");
     }

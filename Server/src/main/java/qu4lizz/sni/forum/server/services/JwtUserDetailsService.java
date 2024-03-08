@@ -1,6 +1,8 @@
 package qu4lizz.sni.forum.server.services;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,5 +24,14 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return modelMapper.map(userRepository.findByUsername(username).
                 orElseThrow(() -> new UsernameNotFoundException(username)), JwtUser.class);
+    }
+
+    public JwtUser getUserFromJwt() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if ("anonymousUser".equals(authentication.getName()))
+            return null;
+
+        return (JwtUser) loadUserByUsername(authentication.getName());
     }
 }
