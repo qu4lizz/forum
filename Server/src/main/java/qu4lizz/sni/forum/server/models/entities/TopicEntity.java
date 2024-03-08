@@ -22,7 +22,7 @@ public class TopicEntity {
     @Column(name = "image")
     private byte[] image;
     @OneToMany(mappedBy = "idTopic")
-    private List<CommentEntity> commentsById;
+    private List<CommentEntity> comments;
 
     @Override
     public boolean equals(Object o) {

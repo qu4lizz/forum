@@ -3,7 +3,7 @@ package qu4lizz.sni.forum.server.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -19,13 +19,13 @@ public class CommentEntity {
     private String content;
     @Basic
     @Column(name = "timestamp")
-    private Timestamp timestamp;
+    private Instant timestamp;
     @Basic
     @Column(name = "id_topic")
     private Integer idTopic;
     @ManyToOne
     @JoinColumn(name = "id_user", referencedColumnName = "id")
-    private UserEntity userByIdUser;
+    private UserEntity user;
 
 
     @Override

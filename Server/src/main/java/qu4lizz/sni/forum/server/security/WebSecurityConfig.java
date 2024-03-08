@@ -1,5 +1,6 @@
 package qu4lizz.sni.forum.server.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+    @Value("${security.allowed-cors}")
+    private String allowedCors;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtUserDetailsService userService;
 
@@ -64,8 +67,7 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration config = new CorsConfiguration();
-        //config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("https://localhost:5173"));
+        config.setAllowedOrigins(List.of(allowedCors));
         config.addAllowedHeader("*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 
@@ -77,10 +79,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers(HttpMethod.POST, "/api/auth/**")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/users/username")
-                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/users/username").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/topics/**").permitAll()
                     .requestMatchers("/students/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
 

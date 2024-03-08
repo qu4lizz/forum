@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleException(Exception ex) {
-        // TODO: logging
+        ex.printStackTrace();
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
