@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice } from "@reduxjs/toolkit";
 import { AuthUser } from "../../types/types";
 import { AppDispatch } from "..";
@@ -5,6 +6,7 @@ import authService from "../../services/auth.service";
 
 const initialState: AuthUser = {
   token: undefined,
+  username: undefined,
 };
 
 const userSlice = createSlice({
@@ -14,7 +16,6 @@ const userSlice = createSlice({
     loginUser(state, action) {
       return action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     logoutUser(state) {
       return initialState;
     },
@@ -27,7 +28,6 @@ export default userSlice.reducer;
 
 export const login = (credentials: any) => async (dispatch: AppDispatch) => {
   const token = await authService.loginWithCode(credentials);
-  console.log("aa:", token);
   await dispatch(loginUser(token));
 };
 

@@ -12,4 +12,14 @@ const getById = async (id: string) => {
   return response.data;
 };
 
-export default { getAll, getById };
+const getPermissionsById = async (id: string) => {
+  const response = await api.get(baseUrl + `/${id}` + "/permissions");
+  return response.data;
+};
+
+const submitCommentToTopic = async (comment: any) => {
+  const response = await api.post(baseUrl + "/comments", comment);
+  return response.data;
+};
+
+export default { getAll, getById, getPermissionsById, submitCommentToTopic };

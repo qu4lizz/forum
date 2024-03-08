@@ -1,5 +1,6 @@
 export interface AuthUser {
   token?: string;
+  username?: string;
 }
 
 export interface TopicCardInfo {

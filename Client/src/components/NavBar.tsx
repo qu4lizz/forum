@@ -15,9 +15,8 @@ import { useDisclosure } from "@mantine/hooks";
 import classes from "./NavBar.module.css";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "../pages/login/Auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "../redux";
-import userService from "../services/user.service";
 import { Logout } from "tabler-icons-react";
 import { logout } from "../redux/slices/userSlice";
 
@@ -25,22 +24,15 @@ export function NavBar() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const token: any = useAppSelector((state: RootState) => state.user.token);
-  const [username, setUsername] = useState<string>("");
+  const username: any = useAppSelector(
+    (state: RootState) => state.user.username
+  );
 
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
 
   const [opened, { open, close }] = useDisclosure(false);
   const [type, setType] = useState<"Login" | "Register">("Login");
-
-  useEffect(() => {
-    if (token) {
-      userService.getUsername().then((res: any) => {
-        setUsername(res.data.username);
-      });
-    }
-  }, [token]);
 
   return (
     <Box>
@@ -81,7 +73,7 @@ export function NavBar() {
           </Group>
 
           <Group visibleFrom="sm">
-            {!token ? (
+            {!username ? (
               <>
                 <Button
                   variant="default"
@@ -156,7 +148,7 @@ export function NavBar() {
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            {!token ? (
+            {!username ? (
               <>
                 <Button
                   variant="default"

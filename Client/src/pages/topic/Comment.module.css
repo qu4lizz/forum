@@ -1,5 +1,6 @@
 .comment {
   padding: var(--mantine-spacing-lg) var(--mantine-spacing-xl);
+  margin: 1rem 5%;
 }
 
 .body {

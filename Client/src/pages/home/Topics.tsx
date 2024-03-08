@@ -3,9 +3,11 @@ import topicService from "../../services/topic.service";
 import { Container, SimpleGrid } from "@mantine/core";
 import { TopicCard } from "./TopicCard";
 import { TopicCardInfo } from "../../types/types";
+import { RootState, useAppSelector } from "../../redux";
 
 export function Topics() {
   const [topics, setTopics] = useState<TopicCardInfo[] | undefined>(undefined);
+  const user: any = useAppSelector((state: RootState) => state.user.username);
 
   useEffect(() => {
     topicService
@@ -16,7 +18,7 @@ export function Topics() {
       .catch((err: any) => {
         console.log(err);
       });
-  }, []);
+  }, [user]);
 
   return (
     <Container size="100%" h="100vh" p="5%">
