@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import authService from "../../services/auth.service";
 import { notifications } from "@mantine/notifications";
-import { login, logout } from "../../redux/slices/userSlice";
+import { login } from "../../redux/slices/userSlice";
 import { useAppDispatch } from "../../redux";
 
 interface Props {

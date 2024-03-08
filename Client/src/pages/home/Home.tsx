@@ -1,8 +1,9 @@
+import { Topics } from "./Topics";
+
 export function Home() {
   return (
     <>
-      poz
-      <div></div>
+      <Topics />
     </>
   );
 }

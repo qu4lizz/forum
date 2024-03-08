@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { Notifications } from "@mantine/notifications";
 import { Home } from "./pages/home/Home";
+import { Topic } from "./pages/topic/Topic";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Container size="100%" h="100vh" px={0}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/topics/:id" element={<Topic />} />
         </Routes>
       </Container>
     </>
