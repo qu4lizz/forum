@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import commentService from "../../services/comment.service";
 import permissionService from "../../services/permission.service";
-import { Flex } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
 import { PendingComment } from "./PendingComment";
 import { RootState, useAppSelector } from "../../redux";
 
-export function ModerateComments() {
+export function ManageComments() {
   const [comments, setComments] = useState<any>();
   const [permissions, setPermissions] = useState<any>();
   const user: any = useAppSelector((state: RootState) => state.user);
@@ -18,6 +18,7 @@ export function ModerateComments() {
     commentService
       .getAllPending()
       .then((res: any) => {
+        console.log(res);
         setComments(res);
       })
       .catch((err: any) => console.log(err));
@@ -38,6 +39,10 @@ export function ModerateComments() {
       direction="column"
       gap="md"
     >
+      {comments && comments.length === 0 && (
+        <Text size="xl">No comments on pending</Text>
+      )}
+
       {comments &&
         permissions &&
         comments.map((c: any) => (

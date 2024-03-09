@@ -67,7 +67,7 @@ export function NavBar() {
               (user.role === "ADMIN" && (
                 <Center
                   className={classes.link}
-                  onClick={() => navigate("/moderate-comments")}
+                  onClick={() => navigate("/manage-comments")}
                 >
                   Comments
                 </Center>
