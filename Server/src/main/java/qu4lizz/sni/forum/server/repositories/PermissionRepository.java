@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PermissionRepository extends JpaRepository<PermissionEntity, Integer> {
     PermissionEntity findByIdUserAndIdTopic(Integer idUser, Integer idTopic);
+    List<PermissionEntity> findAllByIdUser(Integer idUser);
 }

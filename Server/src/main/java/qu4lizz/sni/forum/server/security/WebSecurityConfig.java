@@ -78,13 +78,15 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/users/username").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/topics/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/topics/comments").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/api/topics/comments").authenticated()
+                    .requestMatchers(HttpMethod.POST,   "/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET,    "/api/users/username").permitAll()
+                    .requestMatchers(HttpMethod.GET,    "/api/topics/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,   "/api/topics/comments").authenticated()
+                    .requestMatchers(HttpMethod.PUT,    "/api/topics/comments").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/api/topics/comments").authenticated()
-                    .requestMatchers("/students/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET,    "/api/comments/pending").hasAnyRole("ADMIN", "MODERATOR")
+                    .requestMatchers(HttpMethod.PUT,    "/api/comments/status/**").hasAnyRole("ADMIN", "MODERATOR")
+                    .requestMatchers(HttpMethod.GET,    "/api/permissions/my").authenticated()
                     .anyRequest().authenticated()
 
             )

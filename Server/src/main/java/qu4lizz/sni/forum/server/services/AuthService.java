@@ -99,7 +99,7 @@ public class AuthService {
         if (userEntity.getLoginCode().equals(request.getCode())) {
             JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(userEntity.getUsername());
 
-            return new JwtAuthResponse(jwtService.generateToken(jwtUser), jwtUser.getUsername());
+            return new JwtAuthResponse(jwtService.generateToken(jwtUser), jwtUser.getUsername(), jwtUser.getRole());
         }
         else throw new InvalidCredentialsException("Incorrect login code");
     }
@@ -130,7 +130,6 @@ public class AuthService {
 
     @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes
     private void resetLoginCodes() {
-        System.out.println("scheduler " + codesToRemove.size());
         List<CodeToRemove> removable = new ArrayList<>();
         Instant now = Instant.now();
 

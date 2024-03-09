@@ -1,6 +1,7 @@
 package qu4lizz.sni.forum.server.handlers;
 
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorizedExceptions(UnauthorizedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundExceptions(ChangeSetPersister.NotFoundException ex) {
+        return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

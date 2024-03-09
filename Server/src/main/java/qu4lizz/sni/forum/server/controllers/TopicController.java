@@ -3,11 +3,10 @@ package qu4lizz.sni.forum.server.controllers;
 import jakarta.validation.Valid;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.web.bind.annotation.*;
-import qu4lizz.sni.forum.server.exceptions.UnauthorizedException;
+import qu4lizz.sni.forum.server.exceptions.ForbiddenException;
 import qu4lizz.sni.forum.server.models.dto.TopicDTO;
 import qu4lizz.sni.forum.server.models.dto.TopicDetailsDTO;
 import qu4lizz.sni.forum.server.models.dto.TopicPermissionsDTO;
-import qu4lizz.sni.forum.server.models.entities.TopicEntity;
 import qu4lizz.sni.forum.server.models.requests.CommentCreateRequest;
 import qu4lizz.sni.forum.server.services.TopicService;
 
@@ -38,7 +37,7 @@ public class TopicController {
     }
 
     @PostMapping("/comments")
-    public void createComment(@RequestBody @Valid CommentCreateRequest request) throws UnauthorizedException {
+    public void createComment(@RequestBody @Valid CommentCreateRequest request) throws ForbiddenException {
         topicService.createComment(request);
     }
 }

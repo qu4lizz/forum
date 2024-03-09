@@ -2,7 +2,7 @@ package qu4lizz.sni.forum.server.exceptions;
 
 public class UnauthorizedException extends Exception {
     public UnauthorizedException() {
-        super("You don't have authorization");
+        super("Invalid credentials");
     }
 
     public UnauthorizedException(String message) {

@@ -2,6 +2,7 @@ package qu4lizz.sni.forum.server.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import qu4lizz.sni.forum.server.models.enums.Status;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -23,9 +24,9 @@ public class CommentEntity {
     @Basic
     @Column(name = "id_topic")
     private Integer idTopic;
-    @Basic
-    @Column(name = "approved")
-    private Boolean approved;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
     @ManyToOne
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     private UserEntity user;
