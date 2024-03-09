@@ -1,15 +1,26 @@
-import { Button, Paper, Flex, Textarea } from "@mantine/core";
+import { Button, Flex, Textarea } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import classes from "./Comment.module.css";
 import topicService from "../../services/topic.service";
 import { notifications } from "@mantine/notifications";
+import commentService from "../../services/comment.service";
 
 interface Props {
   idTopic: number;
   content?: string;
+  idComment?: number;
+  reload?: any;
+  editing?: boolean;
+  setEditing?: any;
 }
 
-export function CommentInput({ idTopic, content }: Props) {
+export function CommentInput({
+  idTopic,
+  content,
+  idComment,
+  reload,
+  editing,
+  setEditing,
+}: Props) {
   const form: UseFormReturnType<any> = useForm({
     initialValues: {
       content: content ? content : "",
@@ -24,49 +35,68 @@ export function CommentInput({ idTopic, content }: Props) {
   });
 
   const submitComment = () => {
-    const obj = {
-      content: form.values.content,
-      timestamp: new Date(),
-      idTopic,
-    };
+    if (editing && idComment) {
+      commentService
+        .updateCommentContent(idComment, form.values.content)
+        .then(() => {
+          const val = editing;
+          setEditing(!val);
 
-    topicService
-      .submitCommentToTopic(obj)
-      .then(() => {
-        notifications.show({
-          title: "Successfully Commented",
-          message: "Your comment was sent. Wait until it's approved.",
+          reload();
+          notifications.show({
+            title: "Edit Successful",
+            message: "You have edited a comment",
+          });
+        })
+        .catch((err: any) =>
+          notifications.show({
+            title: "Editing Failed",
+            message: err.response.message,
+          })
+        );
+    } else {
+      const obj = {
+        content: form.values.content,
+        timestamp: new Date(),
+        idTopic,
+      };
+
+      topicService
+        .submitCommentToTopic(obj)
+        .then(() => {
+          notifications.show({
+            title: "Successfully Commented",
+            message: "Your comment was sent. Wait until it's approved.",
+          });
+          form.reset();
+        })
+        .catch((err: any) => {
+          notifications.show({
+            title: "Comment Failed",
+            message: err.response.data,
+          });
         });
-        form.reset();
-      })
-      .catch((err: any) => {
-        notifications.show({
-          title: "Comment Failed",
-          message: err.response.data,
-        });
-      });
+    }
   };
 
   return (
-    <Paper w="90%" mx="5%" withBorder radius="md" className={classes.comment}>
-      <form onSubmit={form.onSubmit(() => submitComment())}>
-        <Textarea
-          size="sm"
-          radius="md"
-          label="Leave a comment"
-          placeholder="Type here..."
-          value={form.values.content}
-          onChange={(target) =>
-            form.setFieldValue("content", target.currentTarget.value)
-          }
-          autosize
-          error={form.errors.content}
-          minRows={3}
-        />
-        <Flex justify="flex-end" mt="xs">
-          <Button type="submit">Comment</Button>
-        </Flex>
-      </form>
-    </Paper>
+    <form onSubmit={form.onSubmit(() => submitComment())}>
+      <Textarea
+        size="sm"
+        radius="md"
+        label={editing ? "Edit comment" : "Leave a comment"}
+        placeholder="Type here..."
+        value={form.values.content}
+        onChange={(target) =>
+          form.setFieldValue("content", target.currentTarget.value)
+        }
+        autosize
+        error={form.errors.content}
+        minRows={3}
+      />
+      <Flex justify="flex-end" mt="xs">
+        <Button type="submit">{editing ? "Edit" : "Comment"}</Button>
+      </Flex>
+    </form>
   );
 }

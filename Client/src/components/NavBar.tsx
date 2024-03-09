@@ -10,6 +10,7 @@ import {
   Title,
   Modal,
   Menu,
+  Center,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./NavBar.module.css";
@@ -24,9 +25,7 @@ export function NavBar() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const username: any = useAppSelector(
-    (state: RootState) => state.user.username
-  );
+  const user: any = useAppSelector((state: RootState) => state.user);
 
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
@@ -61,19 +60,30 @@ export function NavBar() {
             Forum
           </Title>
           <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="#" className={classes.link}>
+            <Center className={classes.link} onClick={() => navigate("/")}>
               Home
-            </a>
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
+            </Center>
+            {user.role === "MODERATOR" ||
+              (user.role === "ADMIN" && (
+                <Center
+                  className={classes.link}
+                  onClick={() => navigate("/moderate-comments")}
+                >
+                  Comments
+                </Center>
+              ))}
+            {user.role === "ADMIN" && (
+              <Center
+                className={classes.link}
+                onClick={() => navigate("/users")}
+              >
+                Users
+              </Center>
+            )}
           </Group>
 
           <Group visibleFrom="sm">
-            {!username ? (
+            {!user.token ? (
               <>
                 <Button
                   variant="default"
@@ -96,7 +106,7 @@ export function NavBar() {
             ) : (
               <Menu shadow="md" width={200}>
                 <Menu.Target>
-                  <Button>{username}</Button>
+                  <Button>{user.username}</Button>
                 </Menu.Target>
 
                 <Menu.Dropdown>
@@ -148,7 +158,7 @@ export function NavBar() {
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            {!username ? (
+            {!user.token ? (
               <>
                 <Button
                   variant="default"
@@ -173,7 +183,7 @@ export function NavBar() {
             ) : (
               <Menu shadow="md" width={200} zIndex={2400}>
                 <Menu.Target>
-                  <Button>{username}</Button>
+                  <Button>{user.username}</Button>
                 </Menu.Target>
 
                 <Menu.Dropdown>

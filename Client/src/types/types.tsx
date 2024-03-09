@@ -1,6 +1,7 @@
 export interface AuthUser {
   token?: string;
   username?: string;
+  role?: string;
 }
 
 export interface TopicCardInfo {
@@ -14,4 +15,8 @@ export interface TopicInfo {
   name: string;
   image: any;
   comments: any;
+}
+
+export interface CommentStatus {
+  status: "APPROVED" | "REJECTED";
 }

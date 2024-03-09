@@ -37,7 +37,7 @@ export function Comment({
           </Text>
         </div>
         <span>
-          {(permissions.edit || currentUser === username) && (
+          {(permissions.update || currentUser === username) && (
             <ActionIcon
               mr={permissions.delete ? 15 : 0}
               size={36}

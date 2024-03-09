@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import topicService from "../../services/topic.service";
 import { TopicInfo } from "../../types/types";
-import { Card, Flex, Group, Image, Text } from "@mantine/core";
+import { Card, Flex, Group, Image, Paper, Text } from "@mantine/core";
 import { getImageSrc } from "../../utils/utilFunctions";
 import classes from "../home/TopicCard.module.css";
 import { Comment } from "./Comment";
@@ -67,7 +67,17 @@ export function Topic() {
                 No comments on this topic
               </Text>
             )}
-            {permissions.write && <CommentInput idTopic={topic.id} />}
+            {permissions.write && (
+              <Paper
+                w="90%"
+                mx="5%"
+                withBorder
+                radius="md"
+                className={classes.comment}
+              >
+                <CommentInput idTopic={topic.id} />
+              </Paper>
+            )}
 
             {topic.comments.map((c: any) => (
               <Comment

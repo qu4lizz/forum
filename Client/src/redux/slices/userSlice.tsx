@@ -7,6 +7,7 @@ import authService from "../../services/auth.service";
 const initialState: AuthUser = {
   token: undefined,
   username: undefined,
+  role: undefined,
 };
 
 const userSlice = createSlice({
