@@ -19,6 +19,10 @@ export function Topic() {
   const { id } = useParams();
 
   useEffect(() => {
+    reload();
+  }, [id, username]);
+
+  const reload = () => {
     if (id) {
       topicService
         .getById(id)
@@ -38,7 +42,7 @@ export function Topic() {
           console.log(err);
         });
     }
-  }, [id, username]);
+  };
 
   return (
     <>
@@ -71,6 +75,8 @@ export function Topic() {
               <Paper
                 w="90%"
                 mx="5%"
+                px="xl"
+                py="lg"
                 withBorder
                 radius="md"
                 className={classes.comment}
@@ -82,11 +88,14 @@ export function Topic() {
             {topic.comments.map((c: any) => (
               <Comment
                 key={c.id}
+                id={c.id}
                 currentUser={username}
                 content={c.content}
                 timestamp={c.timestamp}
                 username={c.user.username}
                 permissions={permissions}
+                reload={reload}
+                topicId={Number(id!)}
               />
             ))}
           </Flex>
