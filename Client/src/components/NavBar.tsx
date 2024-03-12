@@ -63,15 +63,14 @@ export function NavBar() {
             <Center className={classes.link} onClick={() => navigate("/")}>
               Home
             </Center>
-            {user.role === "MODERATOR" ||
-              (user.role === "ADMIN" && (
-                <Center
-                  className={classes.link}
-                  onClick={() => navigate("/manage-comments")}
-                >
-                  Comments
-                </Center>
-              ))}
+            {(user.role === "MODERATOR" || user.role === "ADMIN") && (
+              <Center
+                className={classes.link}
+                onClick={() => navigate("/manage-comments")}
+              >
+                Comments
+              </Center>
+            )}
             {user.role === "ADMIN" && (
               <Center
                 className={classes.link}
