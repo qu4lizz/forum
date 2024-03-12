@@ -1,12 +1,16 @@
 package qu4lizz.sni.forum.server.models.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "revoked_token", schema = "public", catalog = "forum")
 public class RevokedTokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,5 @@
 package qu4lizz.sni.forum.server.services;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -99,6 +98,9 @@ public class AuthService {
         if (userEntity.getLoginCode().equals(request.getCode())) {
             JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(userEntity.getUsername());
 
+            userEntity.setLoginCode(null);
+            userRepository.save(userEntity);
+
             return new JwtAuthResponse(jwtService.generateToken(jwtUser), jwtUser.getUsername(), jwtUser.getRole());
         }
         else throw new InvalidCredentialsException("Incorrect login code");
@@ -137,7 +139,9 @@ public class AuthService {
             if (now.isAfter(toRemove.getTimestamp())) {
                 removable.add(toRemove);
                 var userEntity = userRepository.findById(toRemove.getUserId());
-                if (userEntity.isPresent() && userEntity.get().getLoginCode().equals(toRemove.getCode())) {
+                if (userEntity.isPresent() &&
+                        userEntity.get().getLoginCode() != null &&
+                        userEntity.get().getLoginCode().equals(toRemove.getCode())) {
                     userEntity.get().setLoginCode(null);
                     userRepository.save(userEntity.get());
                 }
