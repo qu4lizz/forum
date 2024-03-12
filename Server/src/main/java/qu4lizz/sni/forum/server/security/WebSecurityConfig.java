@@ -80,6 +80,8 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers(HttpMethod.POST,   "/api/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET,    "/api/users/username").permitAll()
+                    .requestMatchers(HttpMethod.GET,    "/api/users/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT,    "/api/users/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET,    "/api/topics/**").permitAll()
                     .requestMatchers(HttpMethod.POST,   "/api/topics/comments").authenticated()
                     .requestMatchers(HttpMethod.PUT,    "/api/topics/comments").authenticated()

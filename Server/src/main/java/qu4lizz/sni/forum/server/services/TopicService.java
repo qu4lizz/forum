@@ -2,15 +2,9 @@ package qu4lizz.sni.forum.server.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import qu4lizz.sni.forum.server.exceptions.ForbiddenException;
-import qu4lizz.sni.forum.server.exceptions.UnauthorizedException;
-import qu4lizz.sni.forum.server.models.dto.JwtUser;
-import qu4lizz.sni.forum.server.models.dto.TopicDTO;
-import qu4lizz.sni.forum.server.models.dto.TopicDetailsDTO;
-import qu4lizz.sni.forum.server.models.dto.TopicPermissionsDTO;
+import qu4lizz.sni.forum.server.models.dto.*;
 import qu4lizz.sni.forum.server.models.entities.CommentEntity;
 import qu4lizz.sni.forum.server.models.entities.PermissionEntity;
 import qu4lizz.sni.forum.server.models.entities.TopicEntity;
@@ -80,5 +74,11 @@ public class TopicService {
 
         CommentEntity commentEntity = modelMapper.map(request, CommentEntity.class);
         commentRepository.save(commentEntity);
+    }
+
+    public List<TopicWithoutImageDTO> getAllWithoutImage() {
+        List<TopicEntity> topicEntityList = topicRepository.findAll();
+
+        return topicEntityList.stream().map(t -> modelMapper.map(t, TopicWithoutImageDTO.class)).toList();
     }
 }

@@ -7,6 +7,7 @@ import qu4lizz.sni.forum.server.exceptions.ForbiddenException;
 import qu4lizz.sni.forum.server.models.dto.TopicDTO;
 import qu4lizz.sni.forum.server.models.dto.TopicDetailsDTO;
 import qu4lizz.sni.forum.server.models.dto.TopicPermissionsDTO;
+import qu4lizz.sni.forum.server.models.dto.TopicWithoutImageDTO;
 import qu4lizz.sni.forum.server.models.requests.CommentCreateRequest;
 import qu4lizz.sni.forum.server.services.TopicService;
 
@@ -25,6 +26,9 @@ public class TopicController {
     public List<TopicDTO> getAll() {
         return topicService.getAll();
     }
+
+    @GetMapping("/no-image")
+    public List<TopicWithoutImageDTO> getAllWithoutImage() { return topicService.getAllWithoutImage(); }
 
     @GetMapping("/{id}")
     public TopicDetailsDTO getById(@PathVariable Integer id) throws ChangeSetPersister.NotFoundException {
