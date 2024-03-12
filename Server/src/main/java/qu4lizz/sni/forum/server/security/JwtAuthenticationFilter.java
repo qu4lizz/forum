@@ -20,6 +20,7 @@ import qu4lizz.sni.forum.server.services.JwtUserDetailsService;
 import java.io.IOException;
 
 @Component
+// Access Controller
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final JwtUserDetailsService jwtUserDetailsService;
