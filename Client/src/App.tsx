@@ -6,6 +6,7 @@ import { Home } from "./pages/home/Home";
 import { Topic } from "./pages/topic/Topic";
 import { ManageComments } from "./pages/manage-comments/ManageComments";
 import { PrivateRoutes } from "./pages/guard/PrivateRoutes";
+import { ManageUsers } from "./pages/manage-users/ManageUsers";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
 
           <Route element={<PrivateRoutes roles={["ADMIN", "MODERATOR"]} />}>
             <Route path="/manage-comments" element={<ManageComments />} />
+            <Route path="/users" element={<ManageUsers />} />
           </Route>
         </Routes>
       </Container>

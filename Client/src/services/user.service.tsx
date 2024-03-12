@@ -1,10 +1,16 @@
+import { UpdateUserRequest } from "../types/types";
 import api from "./interceptor";
 
 const baseUrl = "/users";
 
-const getUsername = async () => {
-  const response = await api.get(baseUrl + "/username");
-  return response;
+const getAll = async () => {
+  const response = await api.get(baseUrl);
+  return response.data;
 };
 
-export default { getUsername };
+const updateUser = async (id: number, obj: UpdateUserRequest) => {
+  const response = await api.put(baseUrl + `/${id}`, obj);
+  return response.data;
+};
+
+export default { getAll, updateUser };

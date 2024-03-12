@@ -18,7 +18,6 @@ export function ManageComments() {
     commentService
       .getAllPending()
       .then((res: any) => {
-        console.log(res);
         setComments(res);
       })
       .catch((err: any) => console.log(err));

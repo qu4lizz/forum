@@ -7,6 +7,11 @@ const getAll = async () => {
   return response.data;
 };
 
+const getAllWithoutImage = async () => {
+  const response = await api.get(baseUrl + "/no-image");
+  return response.data;
+};
+
 const getById = async (id: string) => {
   const response = await api.get(baseUrl + `/${id}`);
   return response.data;
@@ -22,4 +27,10 @@ const submitCommentToTopic = async (comment: any) => {
   return response.data;
 };
 
-export default { getAll, getById, getPermissionsById, submitCommentToTopic };
+export default {
+  getAll,
+  getAllWithoutImage,
+  getById,
+  getPermissionsById,
+  submitCommentToTopic,
+};
