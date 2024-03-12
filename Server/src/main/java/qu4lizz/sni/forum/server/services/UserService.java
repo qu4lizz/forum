@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import qu4lizz.sni.forum.server.models.dto.UserDTO;
 import qu4lizz.sni.forum.server.models.entities.PermissionEntity;
 import qu4lizz.sni.forum.server.models.entities.UserEntity;
+import qu4lizz.sni.forum.server.models.enums.Status;
 import qu4lizz.sni.forum.server.models.requests.UpdateUserRequest;
 import qu4lizz.sni.forum.server.models.responses.UsernameResponse;
 import qu4lizz.sni.forum.server.repositories.PermissionRepository;
@@ -20,11 +21,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
     private final ModelMapper modelMapper;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, PermissionRepository permissionRepository, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, PermissionRepository permissionRepository, ModelMapper modelMapper, EmailService emailService) {
         this.userRepository = userRepository;
         this.permissionRepository = permissionRepository;
         this.modelMapper = modelMapper;
+        this.emailService = emailService;
     }
 
 
@@ -47,8 +50,17 @@ public class UserService {
 
         if (request.getRole() != null)
             userEntity.setRole(request.getRole());
-        if (request.getStatus() != null)
+        if (request.getStatus() != null) {
+            if (userEntity.getStatus().equals(Status.REQUESTED)) {
+                if (request.getStatus().equals(Status.APPROVED)) {
+                    emailService.sendAccountApproved(userEntity.getEmail());
+                }
+                else if (request.getStatus().equals(Status.REJECTED)) {
+                    emailService.sendAccountRejected(userEntity.getEmail());
+                }
+            }
             userEntity.setStatus(request.getStatus());
+        }
         if (request.getPermissions() != null) {
             for (var p : request.getPermissions()) {
                 PermissionEntity permissionEntity = permissionRepository.findById(p.getId()).orElseThrow(ChangeSetPersister.NotFoundException::new);

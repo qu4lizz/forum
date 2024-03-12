@@ -2,7 +2,6 @@ package qu4lizz.sni.forum.server.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
@@ -59,4 +58,19 @@ public class EmailService {
         sendHtmlMessage(to, subject, message);
     }
 
+    @Async
+    public void sendAccountApproved(String to) {
+        String subject = environment.getProperty("mail.message.status-title");
+        String text = environment.getProperty("mail.message.approved-message");
+
+        sendHtmlMessage(to, subject, text);
+    }
+
+    @Async
+    public void sendAccountRejected(String to) {
+        String subject = environment.getProperty("mail.message.status-title");
+        String text = environment.getProperty("mail.message.rejected-message");
+
+        sendHtmlMessage(to, subject, text);
+    }
 }
