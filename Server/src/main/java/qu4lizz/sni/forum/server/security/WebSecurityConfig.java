@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,11 +16,15 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.reactive.function.client.WebClient;
+import qu4lizz.sni.forum.server.config.GoogleOpaqueTokenIntrospector;
 import qu4lizz.sni.forum.server.services.JwtUserDetailsService;
 
 import java.util.List;
@@ -29,14 +35,16 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 // Authentication Controller
 public class WebSecurityConfig {
-    @Value("${security.allowed-cors}")
+    @Value("${security.client}")
     private String allowedCors;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtUserDetailsService userService;
+    private final WebClient webClient;
 
-    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtUserDetailsService userService) {
+    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtUserDetailsService userService, WebClient webClient) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userService = userService;
+        this.webClient = webClient;
     }
 
     @Bean
@@ -78,24 +86,30 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(customizer -> customizer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers(HttpMethod.POST,   "/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET,    "/api/users/username").permitAll()
-                    .requestMatchers(HttpMethod.GET,    "/api/users/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT,    "/api/users/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.GET,    "/api/topics/**").permitAll()
-                    .requestMatchers(HttpMethod.POST,   "/api/topics/comments").authenticated()
-                    .requestMatchers(HttpMethod.PUT,    "/api/topics/comments").authenticated()
-                    .requestMatchers(HttpMethod.DELETE, "/api/topics/comments").authenticated()
-                    .requestMatchers(HttpMethod.GET,    "/api/comments/pending").hasAnyRole("ADMIN", "MODERATOR")
-                    .requestMatchers(HttpMethod.PUT,    "/api/comments/status/**").hasAnyRole("ADMIN", "MODERATOR")
-                    .requestMatchers(HttpMethod.GET,    "/api/permissions/my").authenticated()
-                    .anyRequest().authenticated()
-
-            )
+                .requestMatchers(HttpMethod.POST,   "/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET,   "/api/oauth/**").permitAll()
+                .requestMatchers(HttpMethod.GET,    "/api/users/username").permitAll()
+                .requestMatchers(HttpMethod.GET,    "/api/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT,    "/api/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,    "/api/topics/**").permitAll()
+                .requestMatchers(HttpMethod.POST,   "/api/topics/comments").authenticated()
+                .requestMatchers(HttpMethod.PUT,    "/api/topics/comments").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/topics/comments").authenticated()
+                .requestMatchers(HttpMethod.GET,    "/api/comments/pending").hasAnyRole("ADMIN", "MODERATOR")
+                .requestMatchers(HttpMethod.PUT,    "/api/comments/status/**").hasAnyRole("ADMIN", "MODERATOR")
+                .requestMatchers(HttpMethod.GET,    "/api/permissions/my").authenticated()
+                .anyRequest().authenticated()
+            ).oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()))
             .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public OpaqueTokenIntrospector introspector() {
+        return new GoogleOpaqueTokenIntrospector(webClient);
     }
 }

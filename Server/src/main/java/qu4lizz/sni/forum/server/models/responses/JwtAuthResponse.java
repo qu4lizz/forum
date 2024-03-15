@@ -10,4 +10,8 @@ public class JwtAuthResponse {
     private String token;
     private String username;
     private Role role;
+
+    public JwtAuthResponse(String token) {
+        this.token = token;
+    }
 }
