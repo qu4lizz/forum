@@ -20,6 +20,7 @@ import authService from "../../services/auth.service";
 import { notifications } from "@mantine/notifications";
 import { login } from "../../redux/slices/userSlice";
 import { useAppDispatch } from "../../redux";
+import oauthService from "../../services/oauth.service";
 
 interface Props {
   req: "Login" | "Register";
@@ -31,9 +32,18 @@ export function Auth({ req, close }: Props) {
   const [isStepOne, setStepOne] = useState<boolean>(true);
   const [verificationCode, setVerificationCode] = useState<string>("");
   const dispatch = useAppDispatch();
+  const [oauthUrl, setOauthUrl] = useState<string>();
 
   useEffect(() => {
     toggle(req);
+
+    oauthService
+      .getOauthUrl()
+      .then((res: any) => {
+        console.log(res);
+        setOauthUrl(res.authURL);
+      })
+      .catch((err: any) => console.log(err));
   }, [req]);
 
   const form = useForm({
@@ -211,7 +221,15 @@ export function Auth({ req, close }: Props) {
           </Text>
           <Divider label="OR" labelPosition="center" my="lg" />
           <Group grow mb="md" mt="md">
-            <GoogleButton radius="xl">Google</GoogleButton>
+            <GoogleButton
+              radius="xl"
+              onClick={() => {
+                if (oauthUrl) window.location.href = oauthUrl;
+                console.log(oauthUrl);
+              }}
+            >
+              Google
+            </GoogleButton>
           </Group>
         </>
       )}
