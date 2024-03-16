@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { AuthUser } from "../../types/types";
 import { AppDispatch } from "..";
 import authService from "../../services/auth.service";
+import oauthService from "../../services/oauth.service";
 
 const initialState: AuthUser = {
   token: undefined,
@@ -29,6 +30,11 @@ export default userSlice.reducer;
 
 export const login = (credentials: any) => async (dispatch: AppDispatch) => {
   const token = await authService.loginWithCode(credentials);
+  await dispatch(loginUser(token));
+};
+
+export const oAuth2Login = (code: string) => async (dispatch: AppDispatch) => {
+  const token = await oauthService.callbackToken(code);
   await dispatch(loginUser(token));
 };
 

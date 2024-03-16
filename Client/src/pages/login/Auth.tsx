@@ -40,7 +40,6 @@ export function Auth({ req, close }: Props) {
     oauthService
       .getOauthUrl()
       .then((res: any) => {
-        console.log(res);
         setOauthUrl(res.authURL);
       })
       .catch((err: any) => console.log(err));
@@ -54,18 +53,17 @@ export function Auth({ req, close }: Props) {
     },
 
     validate: {
-      username: (val: string) =>
-        val.trim().length == 0 ? "Enter username" : null,
+      username: (value: string) =>
+        value.trim() === "" ? "Username is required" : null,
+
       email: (val: string) =>
         type === "Register"
           ? /^\S+@\S+$/.test(val)
             ? null
             : "Invalid email"
           : null,
-      password: (val: string) =>
-        val.length <= 6
-          ? "Password should include at least 6 characters"
-          : null,
+      password: (value: string) =>
+        value.length < 6 ? "Password must be at least 6 characters long" : null,
     },
   });
 

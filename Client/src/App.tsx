@@ -1,31 +1,44 @@
 import { Container } from "@mantine/core";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
-import { Notifications } from "@mantine/notifications";
+import { Notifications, notifications } from "@mantine/notifications";
 import { Home } from "./pages/home/Home";
 import { Topic } from "./pages/topic/Topic";
 import { ManageComments } from "./pages/manage-comments/ManageComments";
 import { PrivateRoutes } from "./pages/guard/PrivateRoutes";
 import { ManageUsers } from "./pages/manage-users/ManageUsers";
-import { useEffect } from "react";
-import oauthService from "./services/oauth.service";
+import { useEffect, useRef } from "react";
+import { useAppDispatch } from "./redux";
+import { oAuth2Login } from "./redux/slices/userSlice";
 
 function App() {
-  const { code } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const hasRequested = useRef(false); // Use a ref instead of state
 
   useEffect(() => {
-    if (code) {
-      console.log("doingcode:", code);
-      oauthService
-        .callbackToken(code)
-        .then((res: any) => {
-          console.log(res);
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get("code");
+
+    if (code && !hasRequested.current) {
+      hasRequested.current = true; // Mark the request as made
+      dispatch(oAuth2Login(code))
+        .then(() => {
+          notifications.show({
+            title: "Sign Up with Google Successful",
+            message: "You have signed up with Google",
+          });
         })
         .catch((err: any) => {
-          console.log(err);
-        });
+          notifications.show({
+            title: "Sign Up with Google Failed",
+            message: err.response.data,
+          });
+        })
+        .finally(() => navigate("/"));
     }
-  }, [code]);
+  }, [location.search, dispatch]);
 
   return (
     <>
