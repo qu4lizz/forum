@@ -7,7 +7,6 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.web.reactive.function.client.WebClient;
 import qu4lizz.sni.forum.server.models.dto.UserInfo;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class GoogleOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
                 .retrieve()
                 .bodyToMono(UserInfo.class)
                 .block();
-        System.out.println(Instant.now() + ".AJMO FUTOG: " + userInfo.email());
+
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("name", userInfo.name());
         attributes.put("email", userInfo.email());

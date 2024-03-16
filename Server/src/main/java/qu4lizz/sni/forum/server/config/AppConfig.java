@@ -3,6 +3,7 @@ package qu4lizz.sni.forum.server.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AppConfig {
@@ -12,5 +13,10 @@ public class AppConfig {
         mapper.getConfiguration().setAmbiguityIgnored(true);
 
         return mapper;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

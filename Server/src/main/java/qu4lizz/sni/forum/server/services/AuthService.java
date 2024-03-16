@@ -65,11 +65,7 @@ public class AuthService {
 
             UserEntity userEntity = userRepository.findById(jwtUser.getId()).orElseThrow();
 
-            if (userEntity.getStatus().equals(Status.REQUESTED)) {
-                throw new UnauthorizedException("Your account still isn't approved");
-            } else if (userEntity.getStatus().equals(Status.REJECTED)) {
-                throw new UnauthorizedException("Your account has been rejected, try registering again");
-            }
+            checkIfAllowed(userEntity);
 
             String code = Utils.generateRandomCode();
             userEntity.setLoginCode(code);
@@ -89,11 +85,7 @@ public class AuthService {
     public JwtAuthResponse loginWithCode(LoginCodeRequest request) throws InvalidCredentialsException, NotFoundException, UnauthorizedException {
         UserEntity userEntity = userRepository.findById(request.getId()).orElseThrow(NotFoundException::new);
 
-        if (userEntity.getStatus().equals(Status.REQUESTED)) {
-            throw new UnauthorizedException("Your account still isn't approved");
-        } else if (userEntity.getStatus().equals(Status.REJECTED)) {
-            throw new UnauthorizedException("Your account has been rejected, try registering again");
-        }
+        checkIfAllowed(userEntity);
 
         if (userEntity.getLoginCode().equals(request.getCode())) {
             JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(userEntity.getUsername());
@@ -104,6 +96,17 @@ public class AuthService {
             return new JwtAuthResponse(jwtService.generateToken(jwtUser), jwtUser.getUsername(), jwtUser.getRole());
         }
         else throw new InvalidCredentialsException("Incorrect login code");
+    }
+
+    public void checkIfAllowed(UserEntity userEntity) throws UnauthorizedException {
+        if (userEntity.getStatus().equals(Status.REQUESTED)) {
+            throw new UnauthorizedException("Your account still isn't approved");
+        } else if (userEntity.getStatus().equals(Status.REJECTED)) {
+            throw new UnauthorizedException("Your account has been rejected, try registering again");
+        }
+        // OAuth2 users can't log in through a login form
+        if (userEntity.isOAuth2User())
+            throw new UnauthorizedException();
     }
 
     public void register(RegisterRequest request) throws AlreadyExistsException {
@@ -118,6 +121,7 @@ public class AuthService {
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userEntity.setRole(Role.USER);
         userEntity.setStatus(Status.REQUESTED);
+        userEntity.setOAuth2User(false);
 
         UserEntity saved = userRepository.save(userEntity);
 

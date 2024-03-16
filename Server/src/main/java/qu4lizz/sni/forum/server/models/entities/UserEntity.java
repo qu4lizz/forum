@@ -5,7 +5,6 @@ import lombok.Data;
 import qu4lizz.sni.forum.server.models.enums.Role;
 import qu4lizz.sni.forum.server.models.enums.Status;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +34,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+    @Basic
+    @Column(name = "is_o_auth2_user")
+    private boolean isOAuth2User;
     @OneToMany(mappedBy = "idUser", fetch = FetchType.EAGER)
     private List<PermissionEntity> permissions;
 

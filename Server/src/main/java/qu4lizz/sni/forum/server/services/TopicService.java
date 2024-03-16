@@ -73,6 +73,7 @@ public class TopicService {
             throw new ForbiddenException("You don't have permissions to write in this topic");
 
         CommentEntity commentEntity = modelMapper.map(request, CommentEntity.class);
+        commentEntity.setStatus(Status.REQUESTED);
         commentRepository.save(commentEntity);
     }
 
