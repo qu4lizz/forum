@@ -44,7 +44,6 @@ public class JwtService {
     }
 
     private String generateToken(HashMap<String,Object> extraClaims, UserDetails userDetails) {
-        //if (userDetails instanceof )
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
