@@ -67,6 +67,7 @@ export function User({ user, topics, reload }: Props) {
               />
             </Flex>
             <PermissionCheckbox
+              key={selectedTopic}
               selected={selectedTopic}
               user={updatedUser}
               topics={topics}
@@ -80,8 +81,6 @@ export function User({ user, topics, reload }: Props) {
     });
 
   const onEditSave = () => {
-    console.log(updatedUser);
-
     userService
       .updateUser(user.id, updatedUser)
       .then(() => {
