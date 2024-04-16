@@ -35,7 +35,7 @@ public class WAFService {
         if(token != null)
             this.revokeTokenService.addToList(token);
 
-        throw new BadRequestException();
+        throw new BadRequestException("Logged out: Malicious activity");
     }
 
     private String getToken(){

@@ -8,6 +8,5 @@ import qu4lizz.sni.forum.server.models.enums.Status;
 @Data
 public class CommentUpdateStatusRequest {
     @NotNull
-    @Pattern(regexp = "^(REQUESTED|APPROVED|REJECTED)$")
     private Status status;
 }
